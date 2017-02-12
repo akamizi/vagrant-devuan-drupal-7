@@ -5,7 +5,7 @@
 
 - name: temporary disable xdebug for composer command
   become: true
-  command: phpdismod xdebug
+  command: php5dismod xdebug
 
 - name: Initialise a new Composer project that requires Drush
   become: false
@@ -27,7 +27,7 @@
 
 - name: re-enable xdebug
   become: true
-  command: phpenmod xdebug
+  command: php5enmod xdebug
 
 - name: Create /etc/drush directory
   file: path=/etc/drush state=directory mode=0755
