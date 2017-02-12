@@ -19,7 +19,7 @@
   - php-pear
 
 - name: Copy php configuration
-  synchronize: src=php dest=/etc/
+  synchronize: src=php5 dest=/etc/
   notify: restart php
 
 - name: Remove default index.html
