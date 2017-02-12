@@ -1,0 +1,28 @@
+---
+
+- name: Install packages
+  apt: state=present name={{ item }}
+  with_items:
+  - nginx
+
+- name: Copy nginx configuration
+  synchronize: src=nginx dest=/etc/
+
+- name: Remove default site
+  file: path=/etc/nginx/sites-available/default state=absent
+
+- name: Remove default site
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Enable default site
+  file: src=/etc/nginx/sites-available/000-default dest=/etc/nginx/sites-enabled/default state=link
+
+- name: Enable localhost site
+  file: src=/etc/nginx/sites-available/localhost.conf dest=/etc/nginx/sites-enabled/localhost state=link
+
+- name: Remove default index.html
+  file: path=/var/www/html/index.nginx-debian.html state=absent
+
+- name: Create /var/cache directory
+  file: path=/var/cache/nginx state=directory mode=0755
+  notify: restart nginx

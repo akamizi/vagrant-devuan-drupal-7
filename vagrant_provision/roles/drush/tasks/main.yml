@@ -1,0 +1,43 @@
+---
+
+- name: Create /opt/drush directory
+  file: path=/opt/drush state=directory mode=0755 owner=vagrant
+
+- name: temporary disable xdebug for composer command
+  become: true
+  command: phpdismod xdebug
+
+- name: Initialise a new Composer project that requires Drush
+  become: false
+  command: composer init --require=drush/drush:7.* -n
+  args:
+    chdir: /opt/drush/
+
+- name: Configure the path Composer should use for the Drush vendor binaries
+  become: false
+  command: composer config bin-dir /usr/local/bin
+  args:
+    chdir: /opt/drush/
+
+- name: Install Drush
+  become: true
+  command: composer install
+  args:
+    chdir: /opt/drush/
+
+- name: re-enable xdebug
+  become: true
+  command: phpenmod xdebug
+
+- name: Create /etc/drush directory
+  file: path=/etc/drush state=directory mode=0755
+
+
+- name: Copy aliases.drushrc.php
+  copy: src=aliases.drushrc.php dest=/etc/drush/aliases.drushrc.php
+
+- name: Configure drush crontab
+  cron:
+    name: "drush"
+    minute: "*/10"
+    job: "/usr/local/bin/drush @drupal —quiet cron"

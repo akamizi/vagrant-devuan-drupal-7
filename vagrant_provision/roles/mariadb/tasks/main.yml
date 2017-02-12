@@ -1,0 +1,28 @@
+---
+
+- name: Install packages
+  apt: state=present name={{ item }}
+  with_items:
+  - mariadb-server
+  - mariadb-client
+  - php5-mysql
+  - python-mysqldb
+
+- name: Mysql root password
+  mysql_user: name=root password=toor check_implicit_admin=yes login_user=root login_password=toor
+  ignore_errors: True
+
+- name: Copy mysql config
+  copy: src=mysqld.cnf dest=/etc/mysql/conf.d/mysqld.cnf
+  notify: restart mysqld
+
+- name: Database user
+  mysql_user: name=drupal password=drupal priv='drupal.*:All' login_user=root login_password=toor host={{ item }}
+  with_items:
+    - 127.0.0.1
+    - localhost
+    - '%'
+
+- name: Database create
+  mysql_db: name=drupal state=present login_user=root login_password=toor
+  register: database_exists

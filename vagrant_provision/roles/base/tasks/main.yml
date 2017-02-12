@@ -1,0 +1,14 @@
+---
+- name: Remove default sources.list
+  file: path=/etc/apt/sources.list state=file
+
+- name: Copy new sources.list
+  copy: src=sources.list dest=/etc/sources.list
+
+- name: install apt requirements
+  become: yes
+  apt: pkg=aptitude
+
+- name: update pre-installed packages
+  become: yes
+  apt: upgrade=full update_cache=yes

@@ -1,0 +1,11 @@
+# Devuan repositories
+deb http://de.mirror.devuan.org/merged jessie main contrib non-free
+deb-src http://de.mirror.devuan.org/merged jessie main contrib non-free
+
+deb http://de.mirror.devuan.org/merged jessie-updates main
+deb-src http://de.mirror.devuan.org/merged/ jessie-updates main
+
+# jessie-security, previously known as 'volatile'
+deb http://de.mirror.devuan.org/merged/ jessie-security main
+deb-src http://de.mirror.devuan.org/merged/ jessie-security main
+

@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+
+  roles:
+    - base
+    - nginx
+    - php
+    - mariadb
+    - composer
+    - drush

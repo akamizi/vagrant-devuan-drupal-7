@@ -1,0 +1,46 @@
+---
+- name: Install packages
+  apt: state=present name={{ item }}
+  with_items:
+  - php5-fpm
+  - php5-cli
+  - php5-common
+  - php5-curl
+  - php5-gd
+  - php5-memcache
+  - php5-memcached
+  - php5-mcrypt
+  - php5-pspell
+  - php5-recode
+  - php5-readline
+  - php5-json
+  - php5-xls
+  - php5-xdebug
+  - php-pear
+
+- name: Copy php configuration
+  synchronize: src=php dest=/etc/
+  notify: restart php
+
+- name: Remove default index.html
+  file: path=/var/www/html/index.html state=absent
+
+- name: Remove default www pool
+  file: path=/etc/php5/fpm/pool.d/www.conf state=absent
+
+- name: Configure xdebug
+  copy: src=xdebug.ini dest=/etc/php5/mods-available/xdebug.ini
+  notify: restart php
+
+- name: Copy xdebug-cli.ini
+  copy: src=xdebug-cli.ini dest=/home/vagrant/xdebug-cli.ini
+  become: no
+
+- name: Remote host env variable
+  lineinfile: dest=/home/vagrant/.profile line="export REMOTE_HOST_IP=`echo $SSH_CLIENT | awk '{ print $1}'`" insertafter=EOF
+
+- name: Phpdebug env
+  lineinfile: dest=/home/vagrant/.profile line="export PHP_IDE_CONFIG=\"serverName=vagrant\"" insertafter=EOF
+
+- name: Phpdebug alias
+  lineinfile: dest=/home/vagrant/.profile line="alias phpdebug=\"php -c ~/xdebug-cli.ini -d xdebug.remote_host=$REMOTE_HOST_IP\"" insertafter=EOF
